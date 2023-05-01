@@ -38,3 +38,70 @@
 # index(mark) – to get index of a mark. 
 # mark_gravity() – to get the gravity of a given mark.
 
+from tkinter import *
+
+"""" Main Gui """
+window = Tk()
+window.config(background="white")
+window.geometry("1280x720")
+
+""" Change Icon """
+#window.iconbitmap("OIG.ico")
+
+"""" Text Box """
+input_field = Text(window, bg=window["background"], width=150, height=200)
+input_field.pack(fill = BOTH, expand = True)
+
+
+
+""" Menu Bar """
+def todo():
+    x = 0
+
+menuBar = Menu(window)
+fileMenu = Menu(menuBar, tearoff=0)
+fileMenu.add_command(label="New", command=todo)
+fileMenu.add_command(label="Open", command=todo)
+fileMenu.add_command(label="Save", command=todo)
+fileMenu.add_separator()
+fileMenu.add_command(label="Exit", command=window.destroy)
+
+menuBar.add_cascade(label="File", menu=fileMenu)
+
+
+editMenu = Menu(menuBar, tearoff=0)
+editMenu.add_command(label="Copy", command=todo)
+editMenu.add_command(label="Paste", command=todo)
+editMenu.add_command(label="Cut", command=todo)
+editMenu.add_command(label="Delete", command=todo)
+editMenu.add_separator()
+editMenu.add_command(label="Find...", command=todo)
+
+menuBar.add_cascade(label="Edit", menu=editMenu)
+
+
+formatMenu = Menu(menuBar, tearoff=0)
+
+menuBar.add_cascade(label="Format", menu=formatMenu)
+
+
+viewMenu = Menu(menuBar, tearoff=0)
+subMenuView = Menu(viewMenu, tearoff=0)
+subMenuView.add_command(label='Keyboard Shortcuts')
+subMenuView.add_command(label='Color Themes')
+
+menuBar.add_cascade(label="View", menu=viewMenu)
+
+
+helpMenu = Menu(menuBar, tearoff=0)
+helpMenu.add_command(label="Help Index", command=todo)
+helpMenu.add_command(label="About", command=todo)
+
+menuBar.add_cascade(label="Help", menu=helpMenu)
+
+window.config(menu=menuBar)
+
+
+
+
+window.mainloop() #calling the gui window
