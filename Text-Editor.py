@@ -41,7 +41,7 @@
 import os
 from tkinter import *
 
-"""" Main Gui """
+""" Main Gui """
 window = Tk()
 window.config(background="white")
 window.geometry("1280x720")
@@ -63,20 +63,25 @@ if len(icon_path) >= 2 and icon_path[1] == ":":
 ####### window.iconbitmap(icon_path) #######
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-""""Temp Icon REMOVE LATER"""
-window.iconbitmap("C:/Users/Brady/Desktop/Python-Text-Editor/icon.ico") #temp
+""" Temp Icon REMOVE LATER """
+#window.iconbitmap("C:/Users/Brady/Desktop/Python-Text-Editor/icon.ico") #temp
 
-"""" Text Box """
-input_field = Text(window, bg=window["background"], width=150, height=200)
+""" Fonts """
+font1=['times', 12, 'normal']
+font2=['arial', 12, 'normal']
+currentFont = []
+
+""" Text Box """
+input_field = Text(window, bg=window["background"], width=150, height=200, font=font1)
 input_field.pack(fill = BOTH, expand = True)
 
 
 
 """ Menu Bar """
-def todo():
+def todo():     # placeholder command (delete later)
     x = 0
 
-menuBar = Menu(window)
+menuBar = Menu(window)  # init menuBar
 fileMenu = Menu(menuBar, tearoff=0)
 fileMenu.add_command(label="New", command=todo)
 fileMenu.add_command(label="Open", command=todo)
@@ -84,7 +89,7 @@ fileMenu.add_command(label="Save", command=todo)
 fileMenu.add_separator()
 fileMenu.add_command(label="Exit", command=window.destroy)
 
-menuBar.add_cascade(label="File", menu=fileMenu)
+menuBar.add_cascade(label="File", menu=fileMenu)        # add fileMenu to menuBar
 
 
 editMenu = Menu(menuBar, tearoff=0)
@@ -99,21 +104,34 @@ editMenu.add_command(label="Find...", command=todo)
 editMenu.add_command(label="Go To...", command=todo)
 editMenu.add_command(label="Replace...", command=todo)
 
-menuBar.add_cascade(label="Edit", menu=editMenu)
+menuBar.add_cascade(label="Edit", menu=editMenu)        # add editMenu to menuBar
 
+
+""" formatMenu Functions """
+def fontAct():
+    'todo'
 
 formatMenu = Menu(menuBar, tearoff=0)
-formatMenu.add_command(label="Font", command=todo)
-menuBar.add_cascade(label="Format", menu=formatMenu)
+formatMenu.add_command(label="Font", command=lambda:fontAct())
 
+menuBar.add_cascade(label="Format", menu=formatMenu)    # add formatMenu to menuBar
+
+
+""" viewMenu Functions """
+def zoomAct(str1):
+    if(str1=='zoomIn'):
+        currentFont[1]=currentFont[1]+2
+    else:
+        currentFont[1]=currentFont[1]-2
+    input_field.config(font=currentFont)
 
 viewMenu = Menu(menuBar, tearoff=0)
-subMenuView = Menu(viewMenu, tearoff=0)
-subMenuView.add_command(label='Zoom In')
-subMenuView.add_command(label='Zoom Out')
+zoomSubMenu = Menu(viewMenu, tearoff=0)
+zoomSubMenu.add_command(label='Zoom In', command=lambda:zoomAct('zoomIn'))
+zoomSubMenu.add_command(label='Zoom Out', command=lambda:zoomAct(''))
 
-viewMenu.add_cascade(label="Zoom", menu=subMenuView)
-menuBar.add_cascade(label="View", menu=viewMenu)
+viewMenu.add_cascade(label="Zoom", menu=zoomSubMenu)    # add zoomSubMenu to viewMenu
+menuBar.add_cascade(label="View", menu=viewMenu)        # add viewMenu to menuBar
 
 
 helpMenu = Menu(menuBar, tearoff=0)
@@ -121,7 +139,7 @@ helpMenu.add_command(label="Help Index", command=todo)
 helpMenu.add_separator()
 helpMenu.add_command(label="About", command=todo)
 
-menuBar.add_cascade(label="Help", menu=helpMenu)
+menuBar.add_cascade(label="Help", menu=helpMenu)        # add helpMenu to menuBar
 
 window.config(menu=menuBar)
 
