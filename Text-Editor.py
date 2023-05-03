@@ -45,10 +45,9 @@ import tkinter as tk
 window = tk.Tk()
 window.config(background="white")
 window.geometry("1280x720")
+window.title("untitled")
 
 """ Change Icon """
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 # Get the current working directory
 cwd = os.getcwd()
 
@@ -60,27 +59,46 @@ if len(icon_path) >= 2 and icon_path[1] == ":":
     icon_path = icon_path[0].upper() + icon_path[1:]
     
 # Set the window icon using the relative file path
-####### window.iconbitmap(icon_path) #######
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-"""" TODO Temp Icon REMOVE LATER"""
-window.iconbitmap("C:/Users/Brady/Desktop/Python-Text-Editor/icon.ico") #temp
+# window.iconbitmap(icon_path)
 
 """ Fonts """
-font1=['times', 12, 'normal']
-font2=['arial', 12, 'normal']
+font1 = ['times', 12, 'normal']
+font2 = ['arial', 12, 'normal']
 currentFont = []
 
+""" Line Numbers """ #FIXME: QOL
+def getLineNum():
+    output = ""
+    row, col = input_field.index('end').split('.')
+    for i in range(1, int(row)):
+        output += str(i) + '\n'
+    return output
+
+def updateLineNum(event=None):
+    lineNumBar = getLineNum()
+    lineNum.config(state="normal")
+    lineNum.delete(1.0, "end")
+    lineNum.insert(1.0, lineNumBar)
+    lineNum.tag_add("right", "1.0", "end")
+    lineNum.config(state="disabled")
+
+lineNum = tk.Text(
+    window,
+    width=5,
+    padx=0,
+    state="disabled",
+    takefocus=0,
+    background="light grey",
+    wrap="none",
+)
+lineNum.pack(side="left", fill="y")
+lineNum.tag_configure("right", justify="right")
+
 """" Text Box """
-# makes a new line when the enter key is pressed
-def insert_newline(event):
-    input_field.insert(tk.INSERT, "\n")
-    return 'break'
-
-input_field = tk.Text(window, wrap="none")
-input_field.pack(fill = "both", expand = True, padx=15)
-input_field.bind("<Return>", insert_newline)
-
+input_field = tk.Text(window, wrap="word", undo=True)
+input_field.bind("<Configure>", updateLineNum)
+input_field.bind("<KeyRelease>", updateLineNum)
+input_field.pack(expand=True, fill="both")
 
 """ Menu Bar """
 def todo():     # placeholder command (delete later)
@@ -111,6 +129,46 @@ editMenu.add_command(label="Replace...", command=todo)
 
 menuBar.add_cascade(label="Edit", menu=editMenu)        # add editMenu to menuBar
 
+""" formatMenu Functions """
+def fontAct():
+    fontsWindow = tk.Toplevel(window)
+    fontsWindow.geometry("400x400")
+    fontsWindow.title("Fonts")
+    fontsWindow.resizable(False,False)
+
+    """ Font Types """
+    fontList = tk.Listbox(fontsWindow)
+    fontScroll = tk.Scrollbar(fontsWindow)
+
+    fontList.grid(row = 0, column = 0, columnspan = 3, sticky = tk.W, padx = 5, pady = 5)
+    fontScroll.grid(row = 0, column = 3, columnspan = 1, sticky = tk.W+tk.NS, pady = 5)
+
+    # Insert elements into the fontList
+    fontList.insert(tk.END, "Times New Roman")
+    fontList.insert(tk.END, "Arial")
+    
+    fontList.config(yscrollcommand = fontScroll.set)
+    fontScroll.config(command = fontList.yview)
+
+    """ Font Types """
+    sizeList = tk.Listbox(fontsWindow)
+    sizeScroll = tk.Scrollbar(fontsWindow)
+
+    sizeList.grid(row = 0, column = 4, columnspan = 3, sticky = tk.W, padx = 5, pady = 5)
+    sizeScroll.grid(row = 0, column = 7, columnspan = 1, sticky = tk.W+tk.NS, pady = 5)
+
+    # Insert elements into the sizeList
+    for size in range(8, 73):
+        sizeList.insert(tk.END, size)
+
+    sizeList.config(yscrollcommand = sizeScroll.set)
+    sizeScroll.config(command = sizeList.yview)
+
+    """  """
+    fontOkay = tk.Button(fontsWindow, text = "Okay", command = 'todo')
+    fontCancel = tk.Button(fontsWindow, text = "Cancel", command = 'todo')
+    fontOkay.grid(row = 1, column = 4, columnspan = 2, sticky = tk.W, padx = 5, pady = 5)
+    fontCancel.grid(row = 1, column = 6, columnspan = 2, sticky = tk.W, padx = 5, pady = 5)
 
 """ formatMenu Functions """
 def fontAct():
@@ -125,10 +183,10 @@ menuBar.add_cascade(label="Format", menu=formatMenu)    # add formatMenu to menu
 """ viewMenu Functions """
 def zoomAct(str1):
     if(str1=='zoomIn'):
-        currentFont[1]=currentFont[1]+2
+        font1[1]=font1[1]+2
     else:
-        currentFont[1]=currentFont[1]-2
-    input_field.config(font=currentFont)
+        font1[1]=font1[1]-2
+    input_field.config(font=font1)
 
 viewMenu = tk.Menu(menuBar, tearoff=0)
 zoomSubMenu = tk.Menu(viewMenu, tearoff=0)
@@ -152,29 +210,6 @@ window.config(menu=menuBar)
 scrollbar = tk.Scrollbar(window, command=input_field.yview)
 scrollbar.pack(side="right", fill="y", before=input_field)
 input_field.configure(yscrollcommand=scrollbar.set)
-
-""" Line Numbers """ #FIXME: update the location and how the output
-# create the line number label
-line_number = tk.Label(window, width=1, highlightthickness=0, borderwidth=0)
-line_number.pack(side="left", fill="y")
-
-def update_line_numbers(event=None):
-    line_number_text = ""
-    line, column = map(int, input_field.index("end-1c").split("."))
-    for i in range(1, line+1):
-        line_number_text += str(i) + "\n"
-    line_number.config(text=line_number_text)
-
-# initial line numbers
-update_line_numbers()
-
-# position the line number label on the left side
-line_number.place(relx=0.0, rely=0.0, relheight=1.0)
-
-# bind the update_line_numbers function to the Configure and KeyRelease events
-input_field.bind("<Configure>", update_line_numbers)
-input_field.bind("<KeyRelease>", update_line_numbers)
-input_field.bind("<MouseWheel>", update_line_numbers)
 
 """ Line Highlighting """
 
