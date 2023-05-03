@@ -100,7 +100,6 @@ input_field.bind("<Configure>", updateLineNum)
 input_field.bind("<KeyRelease>", updateLineNum)
 input_field.pack(expand=True, fill="both")
 
-
 """ Menu Bar """
 def todo():     # placeholder command (delete later)
     x = 0
@@ -129,7 +128,6 @@ editMenu.add_command(label="Go To...", command=todo)
 editMenu.add_command(label="Replace...", command=todo)
 
 menuBar.add_cascade(label="Edit", menu=editMenu)        # add editMenu to menuBar
-
 
 """ formatMenu Functions """
 def fontAct():
@@ -172,7 +170,9 @@ def fontAct():
     fontOkay.grid(row = 1, column = 4, columnspan = 2, sticky = tk.W, padx = 5, pady = 5)
     fontCancel.grid(row = 1, column = 6, columnspan = 2, sticky = tk.W, padx = 5, pady = 5)
 
-
+""" formatMenu Functions """
+def fontAct():
+    'todo'
 
 formatMenu = tk.Menu(menuBar, tearoff=0)
 formatMenu.add_command(label="Font", command=lambda:fontAct())
