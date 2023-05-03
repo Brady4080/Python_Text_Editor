@@ -39,10 +39,10 @@
 # mark_gravity() – to get the gravity of a given mark.
 
 import os
-from tkinter import *
+import tkinter as tk
 
 """" Main Gui """
-window = Tk()
+window = tk.Tk()
 window.config(background="white")
 window.geometry("1280x720")
 
@@ -62,22 +62,26 @@ if len(icon_path) >= 2 and icon_path[1] == ":":
 # Set the window icon using the relative file path
 ####### window.iconbitmap(icon_path) #######
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-""""Temp Icon REMOVE LATER"""
+""" TODO: Temp Icon REMOVE LATER """
 window.iconbitmap("C:/Users/Brady/Desktop/Python-Text-Editor/icon.ico") #temp
 
-"""" Text Box """
-input_field = Text(window, bg=window["background"], width=150, height=200)
-input_field.pack(fill = BOTH, expand = True)
+""" Text Box """
+# makes a new line when the enter key is pressed
+def insert_newline(event):
+    input_field.insert(tk.INSERT, "\n")
+    return 'break'
 
+input_field = tk.Text(window, wrap="none")
+input_field.pack(fill = "both", expand = True, padx=15)
+input_field.bind("<Return>", insert_newline)
 
 
 """ Menu Bar """
 def todo():
     x = 0
 
-menuBar = Menu(window)
-fileMenu = Menu(menuBar, tearoff=0)
+menuBar = tk.Menu(window)
+fileMenu = tk.Menu(menuBar, tearoff=0)
 fileMenu.add_command(label="New", command=todo)
 fileMenu.add_command(label="Open", command=todo)
 fileMenu.add_command(label="Save", command=todo)
@@ -87,7 +91,7 @@ fileMenu.add_command(label="Exit", command=window.destroy)
 menuBar.add_cascade(label="File", menu=fileMenu)
 
 
-editMenu = Menu(menuBar, tearoff=0)
+editMenu = tk.Menu(menuBar, tearoff=0)
 editMenu.add_command(label="Select All", command=todo)
 editMenu.add_separator()
 editMenu.add_command(label="Copy", command=todo)
@@ -102,13 +106,13 @@ editMenu.add_command(label="Replace...", command=todo)
 menuBar.add_cascade(label="Edit", menu=editMenu)
 
 
-formatMenu = Menu(menuBar, tearoff=0)
+formatMenu = tk.Menu(menuBar, tearoff=0)
 formatMenu.add_command(label="Font", command=todo)
 menuBar.add_cascade(label="Format", menu=formatMenu)
 
 
-viewMenu = Menu(menuBar, tearoff=0)
-subMenuView = Menu(viewMenu, tearoff=0)
+viewMenu = tk.Menu(menuBar, tearoff=0)
+subMenuView = tk.Menu(viewMenu, tearoff=0)
 subMenuView.add_command(label='Zoom In')
 subMenuView.add_command(label='Zoom Out')
 
@@ -116,7 +120,7 @@ viewMenu.add_cascade(label="Zoom", menu=subMenuView)
 menuBar.add_cascade(label="View", menu=viewMenu)
 
 
-helpMenu = Menu(menuBar, tearoff=0)
+helpMenu = tk.Menu(menuBar, tearoff=0)
 helpMenu.add_command(label="Help Index", command=todo)
 helpMenu.add_separator()
 helpMenu.add_command(label="About", command=todo)
@@ -125,7 +129,35 @@ menuBar.add_cascade(label="Help", menu=helpMenu)
 
 window.config(menu=menuBar)
 
+""" Scroll Bar """ #FIXME: fix the inverse scrollbar
+scrollbar = tk.Scrollbar(window, command=input_field.yview)
+scrollbar.pack(side="right", fill="y", before=input_field)
+input_field.configure(yscrollcommand=scrollbar.set)
 
+""" Line Numbers """ #FIXME: update the location and how the output
+# create the line number label
+line_number = tk.Label(window, width=1, highlightthickness=0, borderwidth=0)
+line_number.pack(side="left", fill="y")
+
+def update_line_numbers(event=None):
+    line_number_text = ""
+    line, column = map(int, input_field.index("end-1c").split("."))
+    for i in range(1, line+1):
+        line_number_text += str(i) + "\n"
+    line_number.config(text=line_number_text)
+
+# initial line numbers
+update_line_numbers()
+
+# position the line number label on the left side
+line_number.place(relx=0.0, rely=0.0, relheight=1.0)
+
+# bind the update_line_numbers function to the Configure and KeyRelease events
+input_field.bind("<Configure>", update_line_numbers)
+input_field.bind("<KeyRelease>", update_line_numbers)
+input_field.bind("<MouseWheel>", update_line_numbers)
+
+""" Line Highlighting """
 
 
 window.mainloop() #calling the gui window
