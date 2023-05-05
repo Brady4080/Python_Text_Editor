@@ -100,11 +100,29 @@ input_field.bind("<Configure>", updateLineNum)
 input_field.bind("<KeyRelease>", updateLineNum)
 input_field.pack(expand=True, fill="both")
 
+""" Scroll Bar """ #FIXME: uniscrollbar
+def sync_scrollbar(*args):
+    input_field.yview(*args)
+    lineNum.yview(*args)
+
+scrollbar = tk.Scrollbar(window, command=sync_scrollbar)
+scrollbar.pack(side="right", fill="y", before=input_field)
+
+input_field.configure(yscrollcommand=scrollbar.set)
+lineNum.configure(yscrollcommand=scrollbar.set)
+
+""" Line Highlighting """
+
+
+
 """ Menu Bar """
 def todo():     # placeholder command (delete later)
     x = 0
 
 menuBar = tk.Menu(window)
+
+
+"""" file menu """
 fileMenu = tk.Menu(menuBar, tearoff=0)
 fileMenu.add_command(label="New", command=todo)
 fileMenu.add_command(label="Open", command=todo)
@@ -205,13 +223,5 @@ helpMenu.add_command(label="About", command=todo)
 menuBar.add_cascade(label="Help", menu=helpMenu)        # add helpMenu to menuBar
 
 window.config(menu=menuBar)
-
-""" Scroll Bar """ #FIXME: fix the inverse scrollbar
-scrollbar = tk.Scrollbar(window, command=input_field.yview)
-scrollbar.pack(side="right", fill="y", before=input_field)
-input_field.configure(yscrollcommand=scrollbar.set)
-
-""" Line Highlighting """
-
 
 window.mainloop() #calling the gui window
